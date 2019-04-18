@@ -10,4 +10,7 @@ This program is an example of parsing, file searching, working with Python modul
 Required libraries: openpyxl, PyPDF2.
 ------------------------------------------------------------------------------------------------------------
 Сборка exe файла с помощью pyinstaller:/Building an exe file using pyinstaller:
-pyinstaller -F -w 2excel.py
+pyinstaller -F 2excel.py
+
+Рекомендуется также:
+--exclude matplotlib --exclude pandas --exclude PyQt5 --exclude numpy --exclude PySide2

@@ -1,6 +1,7 @@
 import os, openpyxl, re, sys, urllib.request, urllib.error, subprocess
 from openpyxl.styles import Alignment, Font
 from PyPDF2 import PdfFileReader
+print('© Смирнов Алексей, 2018')
 def update():
     try:
         version_file=urllib.request.urlopen('http://madhound.ru/downloads/2excel/version.txt').readline()
@@ -131,7 +132,7 @@ def parse():
     cell=ws.cell(1, 2, 'Наименование')
     cell.alignment=align
     cell=ws.cell(1, 3, 'Формат')
-    cell.alignment=align
+    cell.alignment=Alignment(horizontal='center', vertical='center', wrap_text=False, shrink_to_fit=True)
     cell=ws.cell(1, 4, 'Количество листов')
     cell.alignment=align
     dims['A']=max((dims.get('A', 0), len('Обозначение')))
@@ -185,7 +186,7 @@ def parse():
                 cell=ws.cell(k, 1, des)
                 #cell.alignment=align
                 cell=ws.cell(k, 2, name)
-                cell.alignment=align
+                cell.alignment=Alignment(vertical='center', wrap_text=True, shrink_to_fit=True)
                 string=''
                 for i in form_ls:
                     string=string+i+', '
