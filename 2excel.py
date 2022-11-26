@@ -1,6 +1,7 @@
 import os, openpyxl, re, sys, urllib.request, urllib.error, subprocess
 from openpyxl.styles import Alignment, Font
 from PyPDF2 import PdfFileReader
+from _ast import If
 print('© Смирнов Алексей, 2018')
 def update():
     try:
@@ -107,7 +108,25 @@ def search(string):
         end=result_des.end()
         ls.append(result_des.group())
     else:
-        ls.append('')
+        spec_des_1=r'\d+[.]{1}\d+[-]{1}\d+[.]{1}\d+( )*(СБ|СП|SB|SP)*'
+        result_des=re.match(spec_des_1, string)
+        if result_des:
+            end=result_des.end()
+            ls.append(result_des.group())
+        else:
+            spec_des_1=r'\w+[_]{1}\d+[_]{1}\d+[_]{1}\d+(\s|_)*(СБ|СП|SB|SP)*'
+            result_des=re.match(spec_des_1, string)
+            if result_des:
+                end=result_des.end()
+                ls.append(result_des.group())
+            else:
+                spec_des_1=r'\w+[\s]{1}\d+[.]{1}\d+[.]{1}\d+(\s|_)*(СБ|СП|SB|SP)*'
+                result_des=re.match(spec_des_1, string)
+                if result_des:
+                    end=result_des.end()
+                    ls.append(result_des.group())
+                else:
+                    ls.append('')
 
     result_name=string[end:]
     while result_name[0]==' ':
@@ -207,9 +226,12 @@ def parse():
     return k-l
 
 if __name__ == '__main__':
-    version='2.0'
+    version='2.1'
     help_text=''
     changes='\
+ver 2.1\n\n\
+-Добавлены новые форматы имени файлов.\n\
+-Убрана возможность обновления\n\n\
 ver 2.0\n\n\
 -Добавлена возможность поиска PDF файлов в подкатологах.\n\
 -Изменен модуль обработки файлов Excel.\n\
@@ -243,7 +265,7 @@ ver 1.1.0:\n\n\
                 print(help_text)
             elif i == '--changes':
                 print(changes)
-            elif i == '--update':
-                update()
+            #elif i == '--update':
+                #update()
             elif i == '--post-update':
                 post_update()

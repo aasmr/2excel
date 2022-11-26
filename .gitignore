@@ -1,0 +1,10 @@
+
+Опись.xlsx
+x.y
+dist
+build
+compiling
+*.exe
+*.project
+*.pydevproject
+__pycache__
