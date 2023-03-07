@@ -146,39 +146,49 @@ def parse():
     ws = wb.active
     align=Alignment(horizontal='center', vertical='center', wrap_text=True, shrink_to_fit=True)
     font=Font('Calibri', 12, bold=True)
-    cell=ws.cell(1, 1, 'Обозначение')
+    cell=ws.cell(1, 1, 'Имя папки')
     cell.alignment=align
-    cell=ws.cell(1, 2, 'Наименование')
+    cell=ws.cell(1, 2, 'Имя файла')
     cell.alignment=align
-    cell=ws.cell(1, 3, 'Формат')
-    cell.alignment=Alignment(horizontal='center', vertical='center', wrap_text=False, shrink_to_fit=True)
-    cell=ws.cell(1, 4, 'Количество листов')
+    cell=ws.cell(1, 3, 'Расширение файла')
     cell.alignment=align
-    dims['A']=max((dims.get('A', 0), len('Обозначение')))
-    dims['B']=max((dims.get('B', 0), len('Наименование')))
-    dims['C']=max((dims.get('C', 0), len('Формат')))
-    dims['D']=max((dims.get('D', 0), len('Количество листов')))
+    cell=ws.cell(1, 4, 'Размер файла')
+    cell.alignment=align
+    dims['A']=max((dims.get('A', 0), len('Имя папки')))
+    dims['B']=max((dims.get('B', 0), len('Имя файла')))
+    dims['C']=max((dims.get('C', 0), len('Расширение файла')))
+    dims['D']=max((dims.get('D', 0), len('Размер файла')))
 
     folder=[]
     for i in os.walk('.\\'):
         folder.append(i)
     k=2
-    for adress, dir, file in folder:
-        filelist=os.listdir(adress)
-        l=1
-        flag=0
-        for i in filelist:
-                        ls=search(i)
-                        if re.findall(r'.pdf', i):
-                            flag=1
-        if flag and adress != '.\\':
-                    ws.merge_cells(start_row=k, start_column=1, end_row=k, end_column=4)
-                    cell=ws.cell(k, 1, adress)
-                    cell.alignment=align
-                    cell.font=font
-                    k=k+1
-                    l=l+1
-        for i in filelist:
+    for address, dir, file in folder:
+        for i in file:
+            path = address + '\\' + i
+            name, extension = os.path.splitext(path)
+            name = i.replace(extension, '')
+            size = os.path.getsize(path)
+            if (size // 1024) > 0:
+                if (size // (1024*1024)) > 0:
+                    if (size // (1024*1024*1024)) > 0:
+                        sz = "{:.2f} ГБ".format(size/(1024*1024*1024)) 
+                    else:
+                        sz = "{:.2f} МБ".format(size/(1024*1024))
+                else:
+                    sz = "{:.2f} КБ".format(size/1024)
+            else:
+                sz = str(size) + ' Б'
+            cell=ws.cell(k, 1, address)
+            cell=ws.cell(k, 2, name)
+            cell=ws.cell(k, 3, extension)
+            cell=ws.cell(k, 4, sz)
+            dims['A']=max((dims.get('A', 0), len(address)))
+            dims['B']=max((dims.get('B', 0), len(i)))
+            
+            k+=1
+    
+            '''
             ls=search(i)
             if re.findall(r'.pdf', i):
                 flag=1
@@ -217,13 +227,14 @@ def parse():
                 cell=ws.cell(k, 4, num)
                 cell.alignment=align
                 k=k+1
+                '''
     wb.save('Опись.xlsx')
     wb=openpyxl.load_workbook('./Опись.xlsx', data_only=True)
     sheet=wb.active
     for col, value in dims.items():
         sheet.column_dimensions[col].width = value + 0.71
     wb.save('Опись.xlsx')
-    return k-l
+    return k-1
 
 if __name__ == '__main__':
     version='2.1'
